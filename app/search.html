@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Biblioteksapp</title>
+        <link rel="stylesheet" href="/styles.css" />
+    </head>
+    <body>
+        <h1>Biblioteksapp - Sök böcker och redigera böcker</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Start</a></li>
+                <li><a href="/chat">Chatta med bibliotikarie</a></li>
+                <li><a href="/create">Registrera en bok</a></li>
+                <li><a href="/search">Sök och redigera böcker</a></li>
+                <li><a href="/books">Visa alla böcker</a></li>
+            </ul>
+        </nav>
+        <div class="search-active">
+            <br />
+            <input id="keyword" type="text" />
+            <br />
+            <button id="search">Sök</button>
+        </div>
+
+        <ul id="searchResults"></ul>
+
+        <div class="update-inactive">
+            <input id="bookId" type="hidden" name="bookId" />
+
+            <label for="title">Titel</label>
+            <input id="title" type="text" name="title" autofocus />
+
+            <label for="author">Författare</label>
+            <input id="author" type="text" name="author" />
+
+            <label for="year">Publiceringsår</label>
+            <input id="year" type="text" name="year" />
+
+            <br />
+
+            <button id="btnUpdate" type="submit">Spara</button>
+
+            <br />
+
+            <button id="btnDelete" class="button-delete" type="submit">
+                Radera
+            </button>
+        </div>
+
+        <script>
+            const btnSearch = document.querySelector('#search')
+            const btnUpdate = document.querySelector('#btnUpdate')
+            const btnDelete = document.querySelector('#btnDelete')
+
+            btnSearch.addEventListener('click', () => {
+                printResults()
+            })
+
+            btnUpdate.addEventListener('click', () => {
+                let bookId = document.querySelector('#bookId')
+                let title = document.querySelector('#title')
+                let author = document.querySelector('#author')
+                let year = document.querySelector('#year')
+
+                const options = {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        bookId: bookId.value,
+                        title: title.value,
+                        author: author.value,
+                        year: year.value
+                    })
+                }
+
+                fetch('http://localhost:3001/book/edit', options)
+                    .then((response) => console.log(response))
+                    .catch((error) => console.error(error))
+            })
+
+            btnDelete.addEventListener('click', () => {
+                let bookId = document.querySelector('#bookId')
+
+                const options = {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ bookId: bookId.value })
+                }
+
+                fetch('http://localhost:3001/book/remove', options)
+                    .then((response) => console.log(response))
+                    .catch((error) => console.error(error))
+            })
+
+            async function printResults() {
+                const ul = document.querySelector('#searchResults')
+
+                let data = await getResultsByKeyword()
+
+                for (const book of data) {
+                    let li = document.createElement('li')
+                    let a = document.createElement('a')
+
+                    a.id = book.bookId
+                    a.innerText = book.title
+                    a.addEventListener('click', () => {
+                        ul.innerHTML = ''
+
+                        setCurrentBook(
+                            book.bookId,
+                            book.title,
+                            book.author,
+                            book.year
+                        )
+
+                        displayUpdate()
+                    })
+
+                    li.appendChild(a)
+                    ul.appendChild(li)
+                }
+            }
+
+            function setCurrentBook(bookId, title, author, year) {
+                document.querySelector('#bookId').value = bookId
+                document.querySelector('#title').value = title
+                document.querySelector('#author').value = author
+                document.querySelector('#year').value = year
+            }
+
+            function displayUpdate() {
+                var search = document.querySelector('.search-active')
+                search.className = 'search-inactive'
+
+                var update = document.querySelector('.update-inactive')
+                update.className = 'update-active'
+            }
+
+            async function getResultsByKeyword() {
+                let keyword = document.querySelector('#keyword').value
+
+                const options = {
+                    method: 'GET',
+                    headers: {
+                        Accept: 'application/json'
+                    }
+                }
+
+                let response = await fetch(
+                    'http://localhost:3001/book/search?' +
+                        new URLSearchParams({
+                            keyword: keyword
+                        }),
+                    options
+                ).catch((error) => {
+                    console.error(error)
+                })
+
+                let data = await response.json()
+
+                console.log(data)
+
+                return data
+            }
+        </script>
+    </body>
+</html>

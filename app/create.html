@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Biblioteksapp</title>
+        <link rel="stylesheet" href="/styles.css" />
+    </head>
+    <body>
+        <h1>Biblioteksapp - Registrera en bok</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Start</a></li>
+                <li><a href="/chat">Chatta med bibliotikarie</a></li>
+                <li><a href="/create">Registrera en bok</a></li>
+                <li><a href="/search">Sök och redigera böcker</a></li>
+                <li><a href="/books">Visa alla böcker</a></li>
+            </ul>
+        </nav>
+
+        <label for="title">Titel</label>
+        <input id="title" type="text" name="title" autofocus />
+
+        <label for="author">Författare</label>
+        <input id="author" type="text" name="author" />
+        <label for="year"></label>Publiceringsår
+        <input id="year" type="number" name="year" />
+
+        <br />
+
+        <button id="btnSave" type="submit">Spara</button>
+
+        <script>
+            var btnSave = document.querySelector('#btnSave')
+            var title = document.querySelector('#title')
+            var author = document.querySelector('#author')
+            var year = document.querySelector('#year')
+
+            btnSave.addEventListener('click', () => {
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title: title.value,
+                        author: author.value,
+                        year: year.value
+                    })
+                }
+
+                fetch('http://localhost:3001/book/add', options)
+                    .then((response) => console.log(response))
+                    .catch((error) => console.error(error))
+            })
+        </script>
+    </body>
+</html>

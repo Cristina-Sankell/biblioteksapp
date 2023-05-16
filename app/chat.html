@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/chat.js" defer></script>
+        <link rel="stylesheet" href="/styles.css" />
+        <title>Biblioteksapp</title>
+    </head>
+    <body>
+        <h1>Biblioteksapp - Chatta med bibliotikarie</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Start</a></li>
+                <li><a href="/chat">Chatta med bibliotikarie</a></li>
+                <li><a href="/create">Registrera en bok</a></li>
+                <li><a href="/search">Sök och redigera böcker</a></li>
+                <li><a href="/books">Visa alla böcker</a></li>
+            </ul>
+        </nav>
+        <div class="chat-output"></div>
+        <div class="chat-input-container">
+            <input
+                class="chat-input"
+                type="text"
+                id="chat-handle"
+                placeholder="Namn"
+                maxlength="20"
+            />
+            <input
+                class="chat-input"
+                type="text"
+                id="chat-input"
+                placeholder="Skriv ett meddelande"
+                maxlength="250"
+            />
+            <button id="send-btn">Skicka</button>
+        </div>
+    </body>
+</html>

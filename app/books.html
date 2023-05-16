@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Biblioteksapp</title>
+        <link rel="stylesheet" href="/styles.css" />
+    </head>
+    <body>
+        <h1>Biblioteksapp - Alla böcker</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Start</a></li>
+                <li><a href="/chat">Chatta med bibliotikarie</a></li>
+                <li><a href="/create">Registrera en bok</a></li>
+                <li><a href="/search">Sök och redigera böcker</a></li>
+                <li><a href="/books">Visa alla böcker</a></li>
+            </ul>
+        </nav>
+        <table id="all-books">
+            <tr>
+                <th>Titel</th>
+                <th>Författare</th>
+                <th>Publiceringsår</th>
+                <th>Tillgänglighet</th>
+            </tr>
+        </table>
+        <script>
+            window.onload = printAllBooks()
+
+            async function printAllBooks() {
+                const booksTable = document.querySelector('#all-books')
+                let data = await getAllBooks()
+                for (const book of data) {
+                    console.log(book)
+                    let row = document.createElement('tr')
+                    let availability = book.availability
+                        ? 'Finns tillgänglig'
+                        : 'Alla exemplar utlånade'
+                    row.id = book.bookId
+                    row.innerHTML = `<td>${book.title}</td>
+                        <td>${book.author}</td>
+                        <td>${book.year}</td>
+                        <td>${availability}</td>`
+                    booksTable.appendChild(row)
+                }
+            }
+
+            async function getAllBooks() {
+                const response = await fetch('http://localhost:3001/book/books')
+                const data = await response.json()
+                return data
+            }
+        </script>
+    </body>
+</html>
